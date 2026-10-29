@@ -12,4 +12,11 @@ Resolucions i pràctiques de Python.
 
 Assignatures:
 - Biologia Computacional
-- Infraestructures per al Big Data"# Python" 
+- Infraestructures per al Big Data
+
+## R
+Resolucions Estadístiques de R.
+
+Assignatures:
+- Bioestadística
+- TECNOLOGIES ÒMIQUES I TRACTAMENT DE DADES
