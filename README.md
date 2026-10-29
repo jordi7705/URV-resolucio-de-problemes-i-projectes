@@ -26,3 +26,9 @@ Resolucions i projectes de programació.
 
 Assignatures:
 - Programació
+
+## SQL
+Analisis i projectes de Bases de dades.
+
+Assignatures:
+- Infraestructures per al Big Data
