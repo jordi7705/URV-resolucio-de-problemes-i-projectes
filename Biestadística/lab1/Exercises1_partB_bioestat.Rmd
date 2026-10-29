@@ -1,0 +1,115 @@
+---
+title: "Data analysis and biostatistics"
+author: "Jordi Vivas Sakuta and Izan Flores Tortosa"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\subsection{Exercise 1}
+
+Write a code that stores in a vector all numbers from 1 to 100 but skips the numbers 3,9,13,19,23,29,33,39.... 
+Tips: you can use the operator %in% to check if a value is in a vector. Use the function diff (difference/derivative) to find the pattern behind the forbidden numbers sequence. Check whether the result is correct with the function any. Tip: First, construct the forbidden numbers sequence. 
+
+```{r }
+#Write your code here
+ve4<-NULL
+ve<-c(1:100)
+ve2<-ve[seq(from=3,to=100,by=10)]
+ve3<-seq(from=9,to=100,by=10)
+for(i in 1:length(ve2))
+{
+  ve4<-c(ve4,ve2[i],ve3[i])
+  
+}
+ve4
+ve5<-ve[!(ve %in% ve4)]
+ve5
+
+
+```
+
+\subsection{Exercise 2}
+
+Given the following equation, y=3x^2 + 5x + 2, determine the values of y for an x range of -100 to 100. You might try with and withouth a loop. Plot the function. Hint: use the seq function and try with a step (by) of 1 and 0.1.
+
+```{r }
+#Write your code here
+x<-c(-100:100)
+y1<-c(3*x^2+5*x+2)
+y2<-NULL
+for(i in 1:length(x)){
+  y2<-c(y2,3*x[i]^2+5*x[i]+2)
+}
+y1
+y2
+
+plot(x, y1)
+plot(x, y2)
+```
+
+\subsection{Exercise 3}
+
+Given the vectors vA, vB and vC, create a vector vRes that is the sum of all three vectors, i.e., vRes[i] <- vA[i] + vB[i] + vC[i], where max(i) in any case corresponds to the minimum length among the three vectors. Do not use any loop. Remove NAs. Do not hard-code any variable (e.g., you can not code: d <- 4; use instead d <- min(c(5,4,6)).
+ 
+
+```{r }
+vA <- c(3,5,1,5,6,3,2,1,3,5,2,1,3)
+vB <- c(2,4,5,3,7,8,NA,2,4,6,NA,2,4,4,2,9,8,76)
+vC <- c(8,5,3,2,4,6,8,9,7,7,0,4,3,5,6,4,3)
+
+#Write your code here
+vB<-c(vB[!is.na(vB)])
+vB2<-c(vB[-(length(vA)+1:length(vB))])
+vC2<-c(vC[-(length(vA)+1:length(vC))])
+vRes<-c(vA+vB2+vC2)
+vRes
+
+```
+
+Repeat the exercice but now max(i) corresponds to the maximum length among the three vectors. Same conditions as above apply. A non-existing value in any vector should be computed as 0.
+
+```{r }
+#Write your code here
+VA2<-vA
+vB2<-vB
+for (i in (length(VA2)+1):length(vC)){
+  VA2 <- c(VA2,0) 
+} 
+for (i in (length(vB2)+1):length(vC)){
+  vB2 <- c(vB2,0) 
+} 
+
+vRes2<-c(VA2+vB2+vC)
+vRes2
+```
+
+Take a look at the functions rbind and cbind. Construct a matrix appending the three vectors as its columns or rows. Use resulting appended column matrix and loop across its rows. Find the column number storing the highest value and store its value and index (column number) in a two-column matrix.
+
+
+```{r }
+#Write your code here
+
+MA2<-NULL
+MA<-cbind(VA2,vB2,vC)
+for (i in 1:nrow(MA)){
+  max<-0
+  for(j in 1:ncol(MA)){
+    if(max<MA[i,j]) {
+      max<-MA[i,j]
+      index<-j
+      
+    }
+    
+  }
+  MA2<-rbind(MA2,cbind(max,index))
+}
+
+MA
+MA2
+```

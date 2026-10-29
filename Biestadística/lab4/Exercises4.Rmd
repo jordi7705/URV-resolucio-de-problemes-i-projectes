@@ -1,0 +1,170 @@
+---
+title: "Data analysis and bio-statistics"
+author: "Izan Flores Tortosa & Jordi Vivas Sakuta"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\section{Exercises for practice 4}
+
+All the exercises for this practice will be written in a single R markdown script file (.Rmd extension). Don't forget to use comments to indicate each exercise in the code and what you are trying to achieve within each section. Please, keep each exercise statement in your R script as a comment in order to make the code more readable.
+
+The exercises in practice 4 will be carried out using the provided dataset in a CSV file. This dataset contains the measurements of a real experiment which evaluates the effect of two drugs: fenofibrate and niacin in type 2 diabetes patients. For a complete description of the experiment please refer to the paper: https://doi.org/10.1016/j.atherosclerosis.2014.12.006
+
+The first step before starting the exercise consist in loading the dataset using the read.csv2() function. Here, we are not going to use the metadata columns. So, it is strongly recommended to use the following code to load your data and discarded the unused columns (variables) before starting the exercises.
+
+```{r }
+#Edit this code chunk to sucesfully load the CSV data
+df <- read.csv2("bdLOWHDL_metabolomica.csv", header = T, sep = ";", dec = ",")
+df <- df[,c(4,27:ncol(df))]
+
+```
+
+\subsection{1- A function to calculate the fold change and the p.value}
+Write an R function with the following prototype:
+
+calcFCp(var1, var2)
+
+where:
+
+* var1: a numeric vector with the observations of a variable belonging to the first group.
+* var2: a numeric vector with the observations of the same variable belonging to the second group.
+
+return value:
+  a list object with the named elements: fold.change and p.value
+
+The calcFCp() function must calculate the log2(fold.change) and the p.value of the variable using the Kruskal-Wallis method.
+
+```{r }
+#Write your code here
+calcFCp<-function(var1,var2){
+  
+  var1<-c(var1[!is.na(var1)])
+  var2<-c(var2[!is.na(var2)])
+  fold.change<-log2(mean(var2)/mean(var1))
+  p.value <- kruskal.test(list(var2, var1))$p.value
+  
+ lista<-list(fold.change,p.value)
+ return(lista)
+}
+
+
+```
+
+
+\subsection{2- Testing the calcFCp() function}
+Write a simple script to test the calcFCp() function using the variable TG and comparing the observation from the “control” group with the observation from the “T2DM_basal” group.
+
+```{r }
+#Write your code here
+
+calcFCp(df$TG[df$grupo=="control"],df$TG[df$grupo=="T2DM_basal"])
+```
+
+
+\subsection{3- A function to create the volcano plot}
+Write an R function to display the volcano plot. Use the following prototype:
+
+volcanoPlot( log2FoldChange, pValue, threshold_fc = 0.5, threshold_p = 0.05 )
+
+Where:
+
+* log2FoldChange: the fold change value of each variable in a vector.
+* pValue: the p.value of each variable in a vector. 
+* threshold_fc: the fold change cut-off value (0,5 by default).
+* threshold_p: the p.value cut-off value (0,05 by default).
+   
+```{r }
+#Write your code here
+volcanoPlot<-function(log2FoldChange, pValue, threshold_fc=0.5, threshold_p=0.05,variables){
+  color<-c()
+  for(i in 1:length(log2FoldChange))
+  if((log2FoldChange[i]>threshold_fc || log2FoldChange[i]<(-threshold_fc)) && -log10(pValue[i])>-log10(threshold_p)){
+    color[i]<-"green"
+    
+  }
+  else{
+    color[i]<-"red"
+  }
+  
+  plot(log2FoldChange,-log10(pValue), col=color)
+  abline(v=c(mean(threshold_fc),-mean(threshold_fc)),h=-log10(threshold_p))
+  
+  for(i in 1:length(log2FoldChange))
+  if((log2FoldChange[i]>threshold_fc || log2FoldChange[i]<(-threshold_fc)) && -log10(pValue[i])>-log10(threshold_p)){
+    
+    text(log2FoldChange[i],pValue[i],labels= variables[i],adj= c(0,3.5*log10(pValue[i])), cex=0.6,col= "green")
+  }
+}
+```
+
+
+\subsection{4- Calculate fold change and p.values}
+Write an R script to calculate the fold change and the p.values using the previously created function calcFCp() for the following comparisons:
+
+* control vs. T2DM_basal
+* T2DM_basal vs. T2DM_fenofibrate
+* T2DM_basal vs. T2DM_niacin
+
+Store the results of each comparison in a data.frame with the following structure:
+
+|    variable   | fold.change | p.value |
+|---------------|-------------|---------|
+|TG             |             |         |
+|HDLpp          |             |         |
+|preB_HDL       |             |         |
+|preBHDL_colHDL |             |         |
+|preBHDL_APOA1  |             |         |
+|…              |             |         |
+
+```{r }
+#Write your code here
+controlvsT2DMBasal<-data.frame(variable=colnames(df[-1]),fold.change=0,p.value=0)
+T2DMBasalvsT2DMFenofibrate<-data.frame(variable=colnames(df[-1]),fold.change=0,p.value=0)
+T2DMBasalvsT2DMNiacin<-data.frame(variable=colnames(df[-1]),fold.change=0,p.value=0)
+for (i in 2:ncol(df)){
+a1<-calcFCp(df[df$grupo=="control",i],df[df$grupo=="T2DM_basal",i])
+controlvsT2DMBasal[i-1,-1]<-a1
+
+}
+for (i in 2:ncol(df)){
+a2<-calcFCp(df[df$grupo=="T2DM_basal",i],df[df$grupo=="T2DM_fenofibrate",i])
+T2DMBasalvsT2DMFenofibrate[i-1,-1]<-a2
+}
+for (i in 2:ncol(df)){
+a3<-calcFCp(df[df$grupo=="T2DM_basal",i],df[df$grupo=="T2DM_niacin",i])
+T2DMBasalvsT2DMNiacin[i-1,-1]<-a3
+}
+
+controlvsT2DMBasal
+T2DMBasalvsT2DMFenofibrate
+T2DMBasalvsT2DMNiacin
+
+```
+
+
+\subsection{5- Volcano plots}
+Use the previously calculated fold change and p.value in the data.frames to produce the volcano plot of each comparison. Use your volcanoPlot() function.
+
+```{r }
+#Write your code here
+volcanoPlot(controlvsT2DMBasal[,2],controlvsT2DMBasal[,3],variables =  controlvsT2DMBasal$variable)
+volcanoPlot(T2DMBasalvsT2DMFenofibrate[,2],T2DMBasalvsT2DMFenofibrate[,3],variables =T2DMBasalvsT2DMFenofibrate$variable)
+volcanoPlot(T2DMBasalvsT2DMNiacin[,2],T2DMBasalvsT2DMNiacin[,3],variables =T2DMBasalvsT2DMNiacin$variable)
+
+```
+
+Looking at the volcano plots, answer the following questions:
+
+5.1- When control vs. T2DM_basal is compared, which are the three most up-regulated variables? And the most down-regulated?
+
+Up-Regulated: Remanents, TG and Glucosa
+Down-Regulated: APOE_HDL_ultra, Porcent_APOE_HDL_ultra and HDLpp
+
+5.2- Which down-regulated variables have in common the comparisons of fenofibrate and niacin?
+
+TG and Remanents
+

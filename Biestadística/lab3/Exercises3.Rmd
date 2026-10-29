@@ -1,0 +1,130 @@
+---
+title: "Data analysis and bio-statistics"
+author: "Jordi Vivas Sakuta & Izan Flores Tortosa"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\section{Exercises for practice 3}
+
+All the exercises for this practice will be written in a single R markdown script file (.Rmd extension). Don't forget to use comments to indicate each exercise in the code and what you are trying to achieve within each section. Please, keep each exercise statement in your R script as a comment in order to make the code more readable.
+
+The exercises in practice 3 will be carried out using the provided dataset in a CSV file (the same as in practice 2). This dataset contains the measurements of a real experiment which evaluates the effect of two drugs: fenofibrate and niacin in type 2 diabetes patients. For a complete description of the experiment please refer to the paper: https://doi.org/10.1016/j.atherosclerosis.2014.12.006
+
+The first step before starting the exercise consist in loading the dataset using the read.csv2() function:
+
+```{r }
+#Edit this code chunk to sucesfully load the CSV data
+df <- read.csv2("bdLOWHDL_metabolomica.csv", header = T, sep = ";", dec = ",")
+
+```
+
+Also, in this case we are going to use only the control and T2DM_basal group conditions observations (rows in your data frame). To do so, first we will apply the following subsetting.
+```{r }
+df <- df[union(which(df$grupo == "control"), which(df$grupo == "T2DM_basal")),]
+
+```
+
+
+\subsection{1- ROC curve}
+Create a function to plot the ROC curves of a variable giving the grouping. So, the function prototype should look like:
+
+ROCcurve <- function(x, group, N =  1000 )
+
+where:
+
+\begin{itemize}
+\item[] x: the values of the variables
+\item[] group: a boolean vector with the same length than x specifying for each x condition if its 	reality is positive or negative
+\item[] N: an optional number that determines how many points will be used to draw the ROC 	curve. It is suggested to uses a thousand points to obtain a smooth curve.
+\end{itemize}
+
+The ROCcurve() function must calculate and return the area under the curve (AUC) value.
+
+Tips&Tricks:
+\begin{itemize}
+\item Divide and conquer. It is suggested to divide the big problem into little fragments. For example, first create another function which will be called from the main ROCcurve() function to calculate the TP, FN, TN, FP, TPR and TNR values given one cut-off value. Also, another function could compute the AUC. 
+\item It is recommended to use the which() combined with the length() functions to calculate TP, FN, TN, FP, TPR and TNR values.
+\item Remember that all the TP, FN, TN, FP, TPR and TNR values must be calculated for all possible cut-off values.
+\item The possible cut-off values are a sequence of values ranging from the minimum value of the variable to the maximum value. Here, you can use the R function seq() to easily create all possible cut-off value (explore the parameters: from, to, length.out).
+\item The R function diff() can be used to calculate the differences (slope) of a vector in order to obtain the area under the curve (AUC).
+\item You can use the TG variable in the dataset to test your ROC function.
+\end{itemize}
+
+
+```{r }
+#Write your code here
+ROCcurve <- function(x, group, N =  1000 ){
+  x1<-min(x)
+  x2<-max(x)
+  llindar<-seq(from= x1,to=x2,length.out=N)
+  llindar<-c(llindar[!is.na(llindar)])
+  
+  TP<-c()
+  FN<-c()
+  FP<-c()
+  TN<-c()
+  
+  
+  
+  for(i in 1:N){
+  TP[i]<-length(which(x>=llindar[i] & group))
+  
+  FN[i]<-length(which(x<llindar[i] & group))
+  
+  FP[i]<-length(which(x>=llindar[i] & group))
+  
+  TN[i]<-length(which(x<llindar[i] & group))
+  
+  
+  }
+  
+  
+  
+  
+  TPR<-TP/(TP+FN)
+  FPR<-FP/(TN+FP)
+  AC<-sum(TPR[-1]*diff(1-FPR))
+  print(AC)
+  plot(FPR,TPR,type="l",xlim=c(0,1),ylim=c(0,1), col="salmon")
+  abline (a = 0, b = 1, col = "blue")
+  
+}
+
+
+```
+
+
+\subsection{2- ROC Study}
+Use the created ROCcurve() function to display the ROC curves and AUC calculations of the following variables:
+
+\begin{itemize}
+\item[] TG
+\item[] Col{\_}HDL{\_}ultra
+\item[] APOA1
+\item[] APOAII
+\item[] preB{\_}HDL
+\item[] APOCIII{\_}HDL{\_}ultra
+\item[] Paraoxonasa
+\end{itemize}
+
+
+```{r }
+#Write your code here
+areaTG <- ROCcurve(df$TG, df$grupo==c)
+areaCol_HDL_ultra <- ROCcurve(df$Col_HDL_ultra, df$grupo)
+areaAPOA1 <- ROCcurve(df$APOA1, df$grupo)
+areaAPOAII <- ROCcurve(df$APOAII, df$grupo)
+areapreB_HDL <- ROCcurve(df$preB_HDL, df$grupo)
+areaAPOCIII_HDL_ultra <- ROCcurve(df$APOCIII_HDL_ultra, df$grupo)
+areaParaoxonasa <- ROCcurve(df$Paraoxonasa, df$grupo)
+```
+
+Bear in mind that some variable may exhibit higher values for the diabetes group and vice versa. So, you will have to tune the  ROCcurve()  group parameter to display areas above 0,5 for all cases.
+
+Which of these variable could be the best to establish a binary test to separate diabetic from non-diabetic patients?
+
+TG, because is the closest to the point (0, 1) of the ROC Curve
