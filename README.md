@@ -20,3 +20,9 @@ Resolucions Estadístiques de R.
 Assignatures:
 - Bioestadística
 - TECNOLOGIES ÒMIQUES I TRACTAMENT DE DADES
+
+## JAVA
+Resolucions i projectes de programació.
+
+Assignatures:
+- Programació
