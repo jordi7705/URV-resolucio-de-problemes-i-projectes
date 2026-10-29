@@ -1,0 +1,150 @@
+---
+title: "Data analysis and bio-statistics"
+author: "Jordi Vivas Sakuta and Izan Flores Tortosa"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\section{Exercises for practice 2}
+
+All the exercises for this practice will be written in a single R markdown script file (.Rmd extension). Don't forget to use comments to indicate each exercise in the code and what you are trying to achieve within each section. Please, keep each exercise statement in your R script as a comment in order to make the code more readable.
+
+The exercises in practice 2 will be carried out using the provided dataset in a CSV file. This dataset contains the measurements of a real experiment which evaluates the effect of two drugs: fenofibrate and niacin in type 2 diabetes patients. For a complete description of the experiment please refer to the paper: https://doi.org/10.1016/j.atherosclerosis.2014.12.006
+
+The first step before starting the exercise consist in loading the dataset using the read.csv2() function:
+
+```{r }
+#Edit this code chunk to sucesfully load the CSV data
+df <- read.csv2("bdLOWHDL_metabolomica.csv", header = T, sep = ";", dec = ",", stringsAsFactors = T)
+```
+
+In this practice we will focus exclusively on the following three variables:
+
+\begin{itemize}
+\item[] TG
+\item[] APOA1
+\item[] Paraoxonasa
+\end{itemize}
+
+\subsection{1- Mean, standard deviation, median and quantiles}
+* Calculate the mean (average value), the standard deviation, the median and the quantiles of each variable used in this practice (refer to the previous list). Use the built-in R functions: mean(), sd(), median() and quantile(). Each results must be stored in a new variable. Then use the print() function to display the results in the R Console.
+
+```{r }
+#Write your code here
+vdf<-df[,"TG"]
+vdf<-c(vdf[!is.na(vdf)])
+
+vdf2<-df[,"APOA1"]
+vdf2<-c(vdf2[!is.na(vdf2)])
+
+vdf3<-df[,"Paraoxonasa"]
+vdf3<-c(vdf3[!is.na(vdf3)])
+
+vmean <- c(mean(vdf),mean(vdf2),mean(vdf3))
+vsd <- c(sd(vdf),sd(vdf2),sd(vdf3))
+vmedian<- c(median(vdf),median(vdf2),median(vdf3))
+vquantile<-c(quantile(vdf),quantile(vdf2),quantile(vdf3))
+
+vmean
+vsd
+vmedian
+vquantile
+
+
+
+```
+
+* Finally, use the summary() function to validate your results.
+
+```{r }
+#Write your code here
+summary(vdf)
+summary(vdf2)
+summary(vdf3)
+
+```
+
+
+\subsection{2- Histograms}
+* Plot the histogram of each variable used in this practice (use the hist() function). Looking at the histogram plots with all the experimental groups, describe the distribution we see and if it is possible to drive some conclusion from there. write your answer and observations following the R markdown structure below your histograms plots. Verify in each histogram the position of the previously calculated average values. Display the mean value overlaied on the histogram using the abline() function.
+
+```{r }
+#Write your code here
+
+
+hist(vdf,col="blue")
+abline(v=mean(vdf))
+hist(vdf2,col="red")
+abline(v=mean(vdf2))
+hist(vdf3, col="green")
+abline(v=mean(vdf3))
+```
+
+* Plot again the histogram of each variable but now, separate the histograms using the "grupo" variable as experimental conditions. This is, plot four histograms for each variable to see if some trend can be observed for each experimental condition. You can either create four histograms for each variable or combine all of them in a single plot, color-coding each group distribution. Display the mean value for each experimental condition using the abline() function. Discuss the obtained results and compare them with the previous histograms.
+
+```{r }
+#Write your code here
+
+hist(df[df$grupo=="control","TG"],col="blue")
+abline(v=mean(vdf))
+hist(df[df$grupo=="T2DM_basal","TG"],col="navy blue")
+abline(v=mean(vdf))
+hist(df[df$grupo=="T2DM_fenofibrate","TG"],col="light blue")
+abline(v=mean(vdf))
+hist(df[df$grupo=="T2DM_niacin","TG"],col="turquoise")
+abline(v=mean(vdf))
+
+hist(df[df$grupo=="control","APOA1"],col="gold")
+abline(v=mean(vdf2))
+hist(df[df$grupo=="T2DM_basal","APOA1"],col="yellow")
+abline(v=mean(vdf2))
+hist(df[df$grupo=="T2DM_fenofibrate","APOA1"],col="light yellow")
+abline(v=mean(vdf2))
+hist(df[df$grupo=="T2DM_niacin","APOA1"],col="orange")
+abline(v=mean(vdf2))
+
+hist(df[df$grupo=="control","Paraoxonasa"],col="red")
+abline(v=mean(vdf3))
+hist(df[df$grupo=="T2DM_basal","Paraoxonasa"],col="pink")
+abline(v=mean(vdf3))
+hist(df[df$grupo=="T2DM_fenofibrate","Paraoxonasa"],col="dark red")
+abline(v=mean(vdf3))
+hist(df[df$grupo=="T2DM_niacin","Paraoxonasa"],col="magenta")
+abline(v=mean(vdf3))
+
+```
+
+
+\subsection{3- Boxplots}
+* Plot the boxplot of each variable used in this practice. Create a box for each group: control, T2DM_basal, T2DM_fenofibrate and T2DM_niacin. Use the boxplot() R function. Discuss the obtained trends and explain which variables are up or down regulated. 
+
+```{r }
+#Write your code here
+boxplot(df[df$grupo=="control","TG"], df[df$grupo=="T2DM_basal","TG"], df[df$grupo=="T2DM_fenofibrate","TG"], df[df$grupo=="T2DM_niacin","TG"],col="red")
+
+boxplot(df[df$grupo=="control","APOA1"], df[df$grupo=="T2DM_basal","APOA1"], df[df$grupo=="T2DM_fenofibrate","APOA1"], df[df$grupo=="T2DM_niacin","APOA1"],col="blue")
+
+boxplot(df[df$grupo=="control","Paraoxonasa"], df[df$grupo=="T2DM_basal","Paraoxonasa"], df[df$grupo=="T2DM_fenofibrate","Paraoxonasa"], df[df$grupo=="T2DM_niacin","Paraoxonasa"],col="dark green")
+```
+
+
+\subsection{4- Scatter plots}
+* Plot the Col_HDL_ultra variable against the rest of variables used in this practice. Use the standard plot() function to create the scatter plots and colour the points according the grouping (look at par() and points() R help for more information about plotting parameters). Add a legend to display which color belongs to each group (use the legend() and unique() functions). According to the scatter plots, which variable have the strongest correlation with Col_HDL_ultra?
+
+```{r }
+#Write your code here
+colors <- c("control" = "pink", "T2DM_basal" = "blue", "T2DM_fenofibrate
+" = "purple", "T2DM_niacin
+" = "green")
+
+plot(df$Col_HDL_ultra, df$TG, col = colors[df$grupo], pch = 19)
+
+plot(df$Col_HDL_ultra, df$APOA1, col = colors[df$grupo], pch = 19)
+
+plot(df$Col_HDL_ultra, df$Paraoxonasa, col = colors[df$grupo], pch = 19)
+
+legend("topright", legend = c("control", "T2DM_basal", "T2DM_fenofibrate", "T2DM_niacin"),col = colors, pch =19)
+```

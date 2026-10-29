@@ -1,0 +1,266 @@
+---
+title: "Data analysis and biostatistics"
+author: "Jordi Vivas Sakuta and Izan Flores Tortosa"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\section{Exercises for practice 1}
+  
+All the exercises for this practice will be written in a single R markdown script file (.Rmd extension). Use comments in the code to explain what you are trying to achieve within each section. Please, keep each exercise statement in your R script as a comment in order to make the code more readable.
+
+The exercises in practice 1 will be carried out using the R built-in dataset named "iris". This dataset contains the measurements in centimeters of the variables sepal length, sepal width, petal length and petal width, respectively, for 50 flowers from each of 3 species of iris. The species are setosa, versicolor, and virginica.
+
+The first step before starting the exercise consist in loading the iris dataset using the following command:
+
+```{r }
+data(iris)
+```
+
+
+
+Then, data is accessed using the iris variable. For example, the View() function can be used to visualize the complete data table.
+
+\subsection{1- Basic operations with variables and vectors}
+
+Calculate the sums of all the numeric columns of the iris dataset (Sepal.Length,  Sepal.Width, Petal.Length and Petal.Width). Each sum results must be stored in a new variable. Then use the print() function to display the results in the R Console. Check out the sum() function to easily perform the sums.
+
+Tip, you can combine print() and paste() functions to display multiple elements combined in the R console, for example:
+
+```{r,eval = FALSE}
+print(paste("I'm printing multiple elements. Here it is a number:", 42,
+            " and the Sepal.Length of the first observation:", iris$Sepal.Length[1], sep = "."))
+```
+
+
+```{r }
+#Write your code here
+#muestra del sumatorio de cada elemento del dataframe
+suma_data1<-sum(iris$Sepal.Length[])
+suma_data2<-sum(iris$Sepal.Width[])
+suma_data3<-sum(iris$Petal.Length[])
+suma_data4<-sum(iris$Petal.Width[])
+print(paste("Sepal.Length:",suma_data1,"Sepal.Width:",suma_data2,"Petal.Length:",suma_data3,"Petal.Width:",suma_data4))
+```
+ 
+\subsection{2- Subsetting}
+
+* Create a new data.frame which contains only the first ten rows of iris data. Store the result in a variable (Tip: you can use 1:10 to access the first ten rows).
+
+Tip, you can use the knitr::kable() function to render a data.frame to a formatted table in the exported PDF:
+```{r eval = FALSE}
+knitr::kable(iris)
+```
+
+    
+```{r }
+#Write your code here
+#render del nuevo data frame que contiene las primeras 10 filas del data frame original
+iris2<-iris[1:10, ]
+knitr::kable(iris2)
+
+```
+
+* Create a new data.frame which contains only the observations of the specie "versicolor". 
+
+Tip, explore the == operator to select the rows corresponding to the "versicolor" specie. In example:
+```{r eval = FALSE}
+iris$Species == "versicolor"
+```
+  
+```{r }
+#Write your code here
+#render del dataframe que contiene la especie versicolor
+df_versicolor<-iris[iris$Species == "versicolor", ]
+knitr::kable(df_versicolor)
+
+```
+
+
+\subsection{3- Flow control}
+
+* Write a program using loops and conditionals to calculate the maximum value of each iris column. Store the maximum of each column in vector. Store the row index of each maximum value in another vector. Do not use the max() function or any apply() function since we are practicing with the flow control.
+
+Tip, explore the following R functions to simplify your life: rep(), ncol() and nrow().
+
+
+```{r }
+#Write your code here
+#busca el maximo valor de cada columna y se assigna en un vector
+maximo<-c(0,0,0,0)
+indice<-c(0,0,0,0)
+for(i in 1:nrow(iris)){
+ for(j in 1:(ncol(iris)-1)){
+  if(maximo[j]<iris[i,j]){
+   maximo[j]<-iris[i,j]
+  indice[j]<-i }
+ }
+}
+
+print(paste("El valor maximo es ", maximo, "El indice es ", indice, sep=":"))
+```
+
+* Write a program which counts how many observations exists of the "versicolor" specie. You must only use flow control and basic Boolean operations.
+
+```{r }
+#Write your code here
+#Contador de la cantidad de iris de la especie versicolor que hay
+obs <- 0
+iris3 <- iris[iris$Species == "versicolor", ]
+ for(i in 1:(nrow(iris3))){
+  obs <- obs + 1
+  }
+```
+
+
+\subsection{4- Functions}
+
+* Write a function to calculate the average value of a numeric vector. Using the R built in function mean() is not allowed in this exercise, use a loop instead.
+
+Tip, you can use the length() function to extract the number of elements in a vector.
+
+```{r }
+#Write your code here
+mitja<-function(columna){
+suma<-0
+for(i in 1:nrow(iris)){
+
+   suma<-suma+columna[i]
+   media <- suma/length(columna)
+  
+}
+return(media)
+}
+```
+
+* Use the previous function to calculate the average values of each variable in the iris dataset. Use a loop to execute your average() function on each data.frame column.
+
+```{r }
+#Write your code here
+mi<-c(0,0,0,0)
+for(i in 1:(ncol(iris)-1)){
+ dt<-iris[,i]
+ mi[i]<-mitja(dt)
+}
+```
+
+* Take a look at the following function to extract all values from a given column name (variable) and a selected specie:
+
+```{r }
+getValuesBySpecieVar <- function( dataset, specie, variable)
+{
+  selRows <- which(dataset$Specie == specie)
+  selCol <- which(colnames(dataset) == variable)
+  dataset[selRows, selCol]
+}
+```
+
+So, when this function is executed with the following arguments:
+  
+  \begin{itemize}
+	\item dataset = iris
+	\item specie = "setosa"
+	\item variable = "sepal.length"
+	\end{itemize}
+
+The result is: 5.1, 4.9, 4.7, 4.6, 5.0, 5.4, 4.6, ... (values from sepal.length column in setosa specie)
+
+Answer the following questions:
+
+ * What is the purpose of colnames() function and how is it used here?
+ -En este caso el colnames mira cada nombre de las columnas de dataset para ver si se da la condicion de que sea igual a el nombre variable
+ 
+ * Looking at which() function documentation and its usage in the given getValuesBySpecieVar() function explain how does it work.
+ - especifica los valores de la condicion determinada en este caso para las filas la especie y para las columnas el nombre de la columna 
+
+
+\subsection{5- Working with list data structures}
+
+Use the previously function:  *getValuesBySpecieVar()* to create a list object named sepalLengthList which contains the data for only for the sepal length. Use the following structure:
+
+sepalLengthList
+\begin{itemize}
+\item "setosa": 5.1, 4.9, 4.7, .
+\item "versicolor": 7.0, 6.4, 6.9, .
+\item "virginica": 6.3, 5.8, 7.1, .
+\end{itemize}
+To do so, use a loop that iterates for every possible specie in the iris dataset (Tip: you can use the R unique() function to select each specie only once). Then, use the  *getValuesBySpecieVar()* function with the variable parameter set to "Sepal.Length" to obtain the values in each loop iteration. Finally, use the [[]] operator to assign the values to a new item in the list.
+
+```{r }
+#Write your code here
+sepalLengthList<-list()
+specie<-unique(iris$Species)
+for(i in specie){
+sepalLengthList[[i]]<-getValuesBySpecieVar(iris,i,"Sepal.Length")
+}
+print(sepalLengthList)
+```
+
+\subsection{6- Using apply functions}
+
+* Use the apply() function combined with your average() function to calculate the average of each variable in the iris dataset. 
+
+```{r }
+#Write your code here
+apply(iris[,1:4],2,mitja)
+
+```
+
+* Validate your average results by doing the same replacing your average() function with the R's built-in mean() function.
+
+```{r }
+#Write your code here
+apply(iris[,1:4],2,mean)
+
+```
+
+* Execute the following code chuck that uses an apply() function combined with subsetting and explain how does it work. What is the purpose of the - sign before the which(colnames(iris) == "Species"))?
+
+```{r }
+versicolorAvg <- apply(iris[iris$Species=="versicolor",-which(colnames(iris) == "Species")], 2, mean)
+print(versicolorAvg)
+```
+
+* Use the previously created "sepalLengthList" List and the lapply() function to calculate the average of each sepal length in each specie from the list data structure.
+
+```{r }
+#Write your code here
+lapply(sepalLengthList,mean)
+```
+
+\subsection{7- Plotting data with R}
+
+* Plot the Sepal.Length values only for the setosa specie using lines instead of points. Overlay the average of plotted data using the abline() function. The resulting plot should look similar to the example plot 1 (see the "1-Example_plots.pdf" file).
+
+```{r }
+#Write your code here
+iris4 <- iris[iris$Species == "setosa","Sepal.Length" ]
+mplot <- mean(iris4)
+plot(iris4,type="l",col="salmon", ylab="Sepal length")
+title("Setosa sepal length")
+abline(h=mplot)
+
+
+```
+
+* Plot the Petal.Length versus Petal.width for all species coloring the data points according its own specie. Use the legend() function to create a legend to easily identify the color corresponding to each specie. The resulting plot should look similar to the example plot 2 (see the "Example_plots.pdf" file).
+
+```{r }
+#Write your code here
+iris5 <- iris[,"Petal.Length" ]
+iris6 <- iris[,"Petal.Width" ]
+color<-c("setosa"="black","versicolor"="red","virginica"="green")
+plot(iris5,iris6, col=color[iris$Species], xlab="Petal length", ylab= "Petal width", pch=16)
+title("Petal length vs. width")
+species <- c("setosa", "versicolor", "virginica")
+legend("topleft", legend=species, pch=16, col=color)
+
+
+```
+
