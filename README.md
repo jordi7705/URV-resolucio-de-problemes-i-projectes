@@ -32,3 +32,10 @@ Analisis i projectes de Bases de dades.
 
 Assignatures:
 - Infraestructures per al Big Data
+
+## VHDL
+Hardware i projectes en placa base.
+
+Assignatures:
+- FONAMENTS DE COMPUTADORS
+- Electrònica Digital 
