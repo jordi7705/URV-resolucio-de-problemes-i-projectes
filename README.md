@@ -1,15 +1,15 @@
-# Matlab y Python
+# Repositori de reptes universitaris de MATLAB i Python
 
 ## MATLAB
-Resolucions als laboratoris universitaris de Matlab.
+Resolucions dels laboratoris universitaris de MATLAB.
 
 Assignatures:
-- Fonaments de la Comunicació
+- Fonaments de la Comunicació II
 - Tractament de Senyals
 
 ## Python
-Resolucions i pràctiques de Python. 
+Resolucions i pràctiques de Python.
 
 Assignatures:
 - Biologia Computacional
-- INFRAESTRUCTURES PER AL BIG DATA  
+- Infraestructures per al Big Data
