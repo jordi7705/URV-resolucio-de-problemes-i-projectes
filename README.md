@@ -1,4 +1,4 @@
-# Repositori de reptes universitaris de MATLAB i Python
+# Repositori de reptes universitaris 
 
 ## MATLAB
 Resolucions dels laboratoris universitaris de MATLAB.
