@@ -12,4 +12,4 @@ Resolucions i pràctiques de Python.
 
 Assignatures:
 - Biologia Computacional
-- Infraestructures per al Big Data
+- Infraestructures per al Big Data"# Python" 
